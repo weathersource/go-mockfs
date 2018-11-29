@@ -26,6 +26,7 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
+// New creates a new Firestore Client and MockServer
 func New(t *testing.T) (*firestore.Client, *MockServer) {
 	srv, err := newMockServer()
 	if err != nil {

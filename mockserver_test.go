@@ -15,15 +15,6 @@ import (
 	codes "google.golang.org/grpc/codes"
 )
 
-// import (
-// 	"math"
-// 	"sort"
-
-// 	"cloud.google.com/go/internal/pretty"
-// 	tspb "github.com/golang/protobuf/ptypes/timestamp"
-// 	"github.com/golang/protobuf/ptypes/wrappers"
-// )
-
 var (
 	aTime                = time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
 	aTime2               = time.Date(2017, 2, 5, 0, 0, 0, 0, time.UTC)

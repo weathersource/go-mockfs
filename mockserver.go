@@ -32,6 +32,8 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
+// MockServer mocks the pb.FirestoreServer interface
+// (https://godoc.org/google.golang.org/genproto/googleapis/firestore/v1beta1#FirestoreServer)
 type MockServer struct {
 	pb.FirestoreServer
 
@@ -104,7 +106,7 @@ func (s *MockServer) popRPC(gotReq proto.Message) (interface{}, error) {
 			for _, w := range gotReqTyped.Writes {
 				switch opTyped := w.Operation.(type) {
 				case *pb.Write_Transform:
-					sort.Sort(ByFieldPath(opTyped.Transform.FieldTransforms))
+					sort.Sort(byFieldPath(opTyped.Transform.FieldTransforms))
 				}
 			}
 		}
@@ -123,11 +125,11 @@ func (s *MockServer) popRPC(gotReq proto.Message) (interface{}, error) {
 	return resp, nil
 }
 
-func (a ByFieldPath) Len() int           { return len(a) }
-func (a ByFieldPath) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByFieldPath) Less(i, j int) bool { return a[i].FieldPath < a[j].FieldPath }
+type byFieldPath []*pb.DocumentTransform_FieldTransform
 
-type ByFieldPath []*pb.DocumentTransform_FieldTransform
+func (a byFieldPath) Len() int           { return len(a) }
+func (a byFieldPath) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a byFieldPath) Less(i, j int) bool { return a[i].FieldPath < a[j].FieldPath }
 
 // GetDocument overrides the FirestoreServer GetDocument method
 func (s *MockServer) GetDocument(_ context.Context, req *pb.GetDocumentRequest) (*pb.Document, error) {
