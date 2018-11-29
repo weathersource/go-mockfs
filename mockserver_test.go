@@ -24,7 +24,7 @@ var (
 	aTimestamp3          = mustTimestampProto(aTime3)
 	writeResultForSet    = &firestore.WriteResult{UpdateTime: aTime}
 	testData             = map[string]interface{}{"a": 1}
-	testFields           = map[string]*pb.Value{"a": &pb.Value{ValueType: &pb.Value_IntegerValue{int64(1)}}}
+	testFields           = map[string]*pb.Value{"a": {ValueType: &pb.Value_IntegerValue{int64(1)}}}
 	commitResponseForSet = &pb.CommitResponse{
 		WriteResults: []*pb.WriteResult{{UpdateTime: aTimestamp}},
 	}
@@ -58,7 +58,7 @@ func TestAddRPC(t *testing.T) {
 		Name:       path,
 		CreateTime: aTimestamp,
 		UpdateTime: aTimestamp,
-		Fields:     map[string]*pb.Value{"f": &pb.Value{ValueType: &pb.Value_IntegerValue{int64(1)}}},
+		Fields:     map[string]*pb.Value{"f": {ValueType: &pb.Value_IntegerValue{int64(1)}}},
 	}
 	srv.AddRPC(&pb.BatchGetDocumentsRequest{
 		Database:  dbPath,
