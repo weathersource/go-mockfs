@@ -72,7 +72,7 @@ func TestAddRPC(t *testing.T) {
 	ref := c.Collection("C").Doc("a")
 	gotDoc, err := ref.Get(ctx)
 	assert.Nil(err)
-	if assert.NotNil(ref, gotDoc) {
+	if assert.NotNil(gotDoc) {
 		assert.Equal(ref, gotDoc.Ref)
 		assert.Equal(aTime, gotDoc.CreateTime)
 		assert.Equal(aTime, gotDoc.UpdateTime)

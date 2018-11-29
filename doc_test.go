@@ -1,4 +1,4 @@
-package mockfs
+package mockfs_test
 
 import (
 	"context"
@@ -9,6 +9,8 @@ import (
 	assert "github.com/stretchr/testify/assert"
 	mockfs "github.com/weathersource/go-mockfs"
 	pb "google.golang.org/genproto/googleapis/firestore/v1beta1"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
 )
 
 func Example_error() {
@@ -17,14 +19,14 @@ func Example_error() {
 	// Get a firestore client and mock firestore server
 	client, server := mockfs.New(t)
 
-	// Populate a mock document "b" in collection "C"
+	// Populate a mock document "a" in collection "C"
 	var (
-		aTime      = time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
-		aTimestamp = ptypes.TimestampProto(aTime)
-		dbPath     = "projects/projectID/databases/(default)"
-		path       = "projects/projectID/databases/(default)/documents/C/b"
+		aTime         = time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
+		aTimestamp, _ = ptypes.TimestampProto(aTime)
+		dbPath        = "projects/projectID/databases/(default)"
+		path          = "projects/projectID/databases/(default)/documents/C/a"
 	)
-	srv.AddRPC(
+	server.AddRPC(
 		&pb.BatchGetDocumentsRequest{
 			Database:  dbPath,
 			Documents: []string{path},
@@ -38,10 +40,10 @@ func Example_error() {
 	)
 
 	// Get document "a" in collection "C"
-	_, err := client.Collection("C").Doc("b").Get(context.Background())
+	_, err := client.Collection("C").Doc("a").Get(context.Background())
 
 	// Test the response
-	assert.Equal(codes.NotFound, grpc.Code(err))
+	assert.Equal(t, codes.NotFound, grpc.Code(err))
 }
 
 func Example_success() {
@@ -50,14 +52,14 @@ func Example_success() {
 	// Get a firestore client and mock firestore server
 	client, server := mockfs.New(t)
 
-	// Populate a mock document "a" in collection "C"
+	// Populate a mock document "b" in collection "C"
 	var (
 		aTime          = time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
 		aTime2         = time.Date(2017, 2, 5, 0, 0, 0, 0, time.UTC)
 		aTimestamp, _  = ptypes.TimestampProto(aTime)
 		aTimestamp2, _ = ptypes.TimestampProto(aTime2)
 		dbPath         = "projects/projectID/databases/(default)"
-		path           = "projects/projectID/databases/(default)/documents/C/a"
+		path           = "projects/projectID/databases/(default)/documents/C/b"
 		pdoc           = &pb.Document{
 			Name:       path,
 			CreateTime: aTimestamp,
@@ -78,12 +80,13 @@ func Example_success() {
 		},
 	)
 
-	// Get document "a" in collection "C"
-	gotDoc, err := client.Collection("C").Doc("a").Get(context.Background())
+	// Get document "b" in collection "C"
+	ref := client.Collection("C").Doc("b")
+	gotDoc, err := ref.Get(context.Background())
 
 	// Test the response
 	assert.Nil(t, err)
-	if assert.NotNil(t, ref, gotDoc) {
+	if assert.NotNil(t, gotDoc) {
 		assert.Equal(t, ref, gotDoc.Ref)
 		assert.Equal(t, aTime, gotDoc.CreateTime)
 		assert.Equal(t, aTime, gotDoc.UpdateTime)
