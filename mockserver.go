@@ -37,7 +37,7 @@ import (
 type MockServer struct {
 	pb.FirestoreServer
 
-	Addr string
+	addr string
 
 	reqItems []reqItem
 	resps    []interface{}
@@ -53,7 +53,7 @@ func newMockServer() (*MockServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	mock := &MockServer{Addr: srv.Addr}
+	mock := &MockServer{addr: srv.Addr}
 	pb.RegisterFirestoreServer(srv.Gsrv, mock)
 	srv.start()
 	return mock, nil
