@@ -27,7 +27,7 @@ import (
 
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
-	testgsrv "github.com/weathersource/go-testgsrv"
+	gsrv "github.com/weathersource/go-gsrv"
 	pb "google.golang.org/genproto/googleapis/firestore/v1beta1"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -50,7 +50,7 @@ type reqItem struct {
 }
 
 func newMockServer() (*MockServer, error) {
-	srv, err := testgsrv.NewServer()
+	srv, err := gsrv.NewServer()
 	if err != nil {
 		return nil, err
 	}
