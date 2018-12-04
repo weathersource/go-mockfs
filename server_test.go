@@ -38,20 +38,21 @@ func mustTimestampProto(t time.Time) *tspb.Timestamp {
 	return ts
 }
 
-func TestNewMockServer(t *testing.T) {
+func TestnewServer(t *testing.T) {
 	assert := assert.New(t)
 
-	server, err := newMockServer()
+	server, err := newServer()
 	assert.NotNil(server)
 	assert.Nil(err)
 }
 
 // modified from https://github.com/GoogleCloudPlatform/google-cloud-go/blob/master/firestore/docref_test.go
-func TestAddRPC(t *testing.T) {
+func TestAddData(t *testing.T) {
 	assert := assert.New(t)
 	ctx := context.Background()
-	c, srv := New(t)
 	dbPath := "projects/projectID/databases/(default)"
+	c, srv, err := New()
+	assert.Nil(err)
 
 	path := "projects/projectID/databases/(default)/documents/C/a"
 	pdoc := &pb.Document{
@@ -60,15 +61,18 @@ func TestAddRPC(t *testing.T) {
 		UpdateTime: aTimestamp,
 		Fields:     map[string]*pb.Value{"f": {ValueType: &pb.Value_IntegerValue{int64(1)}}},
 	}
-	srv.AddRPC(&pb.BatchGetDocumentsRequest{
-		Database:  dbPath,
-		Documents: []string{path},
-	}, []interface{}{
-		&pb.BatchGetDocumentsResponse{
-			Result:   &pb.BatchGetDocumentsResponse_Found{pdoc},
-			ReadTime: aTimestamp2,
+	srv.AddData(
+		"BatchGetDocuments",
+		&pb.BatchGetDocumentsRequest{
+			Database:  dbPath,
+			Documents: []string{path},
+		}, []interface{}{
+			&pb.BatchGetDocumentsResponse{
+				Result:   &pb.BatchGetDocumentsResponse_Found{pdoc},
+				ReadTime: aTimestamp2,
+			},
 		},
-	})
+	)
 	ref := c.Collection("C").Doc("a")
 	gotDoc, err := ref.Get(ctx)
 	assert.Nil(err)
@@ -80,7 +84,8 @@ func TestAddRPC(t *testing.T) {
 	}
 
 	path2 := "projects/projectID/databases/(default)/documents/C/b"
-	srv.AddRPC(
+	srv.AddData(
+		"BatchGetDocuments",
 		&pb.BatchGetDocumentsRequest{
 			Database:  dbPath,
 			Documents: []string{path2},
@@ -89,16 +94,18 @@ func TestAddRPC(t *testing.T) {
 				Result:   &pb.BatchGetDocumentsResponse_Missing{path2},
 				ReadTime: aTimestamp3,
 			},
-		})
+		},
+	)
 	_, err = c.Collection("C").Doc("b").Get(ctx)
 	assert.Equal(codes.NotFound, grpc.Code(err))
 }
 
 // modified from https://github.com/GoogleCloudPlatform/google-cloud-go/blob/master/firestore/collref_test.go
-func TestAddRPCAdjust(t *testing.T) {
+func TestAddDataAdjust(t *testing.T) {
 	assert := assert.New(t)
 	ctx := context.Background()
-	c, srv := New(t)
+	c, srv, err := New()
+	assert.Nil(err)
 
 	wantReq := &pb.CommitRequest{
 		Database: "projects/projectID/databases/(default)",
@@ -117,11 +124,18 @@ func TestAddRPCAdjust(t *testing.T) {
 	w.CurrentDocument = &pb.Precondition{
 		ConditionType: &pb.Precondition_Exists{false},
 	}
-	srv.AddRPCAdjust(wantReq, commitResponseForSet, func(gotReq proto.Message) {
-		// We can't know the doc ID before Add is called, so we take it from
-		// the request.
-		w.Operation.(*pb.Write_Update).Update.Name = gotReq.(*pb.CommitRequest).Writes[0].Operation.(*pb.Write_Update).Update.Name
-	})
+	srv.AddDataAdjust(
+		"Commit",
+		wantReq,
+		commitResponseForSet,
+		func(wantReq proto.Message, gotReq proto.Message) proto.Message {
+			// copy wantReq so as to not overwrite the original
+			wantReqAdj := *(wantReq.(*pb.CommitRequest))
+			// We can't know the doc ID before Add is called, so we take it from the request.
+			wantReqAdj.Writes[0].Operation.(*pb.Write_Update).Update.Name = gotReq.(*pb.CommitRequest).Writes[0].Operation.(*pb.Write_Update).Update.Name
+			return &wantReqAdj
+		},
+	)
 	_, wr, err := c.Collection("C").Add(ctx, testData)
 	assert.Nil(err)
 	assert.Equal(writeResultForSet, wr)

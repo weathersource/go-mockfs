@@ -19,26 +19,26 @@ package mockfs
 
 import (
 	"context"
-	"testing"
 
 	firestore "cloud.google.com/go/firestore"
+	errors "github.com/weathersource/go-errors"
 	option "google.golang.org/api/option"
 	grpc "google.golang.org/grpc"
 )
 
 // New creates a new Firestore Client and MockServer
-func New(t *testing.T) (*firestore.Client, *MockServer) {
-	srv, err := newMockServer()
+func New() (*firestore.Client, *MockServer, error) {
+	srv, err := newServer()
 	if err != nil {
-		t.Fatal(err)
+		return nil, nil, errors.NewUnknownError("Failed to create Firestore server.")
 	}
-	conn, err := grpc.Dial(srv.addr, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(srv.Addr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		t.Fatal(err)
+		return nil, nil, errors.NewUnknownError("Failed to create Firestore connection.")
 	}
 	client, err := firestore.NewClient(context.Background(), "projectID", option.WithGRPCConn(conn))
 	if err != nil {
-		t.Fatal(err)
+		return nil, nil, errors.NewUnknownError("Failed to create Firestore client.")
 	}
-	return client, srv
+	return client, srv, nil
 }

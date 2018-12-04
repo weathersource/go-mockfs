@@ -17,7 +17,10 @@ func Example_error() {
 	var t *testing.T
 
 	// Get a firestore client and mock firestore server
-	client, server := mockfs.New(t)
+	client, server, err := mockfs.New()
+	assert.NotNil(t, client)
+	assert.NotNil(t, server)
+	assert.Nil(t, err)
 
 	// Populate a mock document "a" in collection "C"
 	var (
@@ -26,7 +29,8 @@ func Example_error() {
 		dbPath        = "projects/projectID/databases/(default)"
 		path          = "projects/projectID/databases/(default)/documents/C/a"
 	)
-	server.AddRPC(
+	server.AddData(
+		"GetDocument",
 		&pb.BatchGetDocumentsRequest{
 			Database:  dbPath,
 			Documents: []string{path},
@@ -40,17 +44,20 @@ func Example_error() {
 	)
 
 	// Get document "a" in collection "C"
-	_, err := client.Collection("C").Doc("a").Get(context.Background())
+	_, err2 := client.Collection("C").Doc("a").Get(context.Background())
 
 	// Test the response
-	assert.Equal(t, codes.NotFound, grpc.Code(err))
+	assert.Equal(t, codes.NotFound, grpc.Code(err2))
 }
 
 func Example_success() {
 	var t *testing.T
 
 	// Get a firestore client and mock firestore server
-	client, server := mockfs.New(t)
+	client, server, err := mockfs.New()
+	assert.NotNil(t, client)
+	assert.NotNil(t, server)
+	assert.Nil(t, err)
 
 	// Populate a mock document "b" in collection "C"
 	var (
@@ -67,7 +74,8 @@ func Example_success() {
 			Fields:     map[string]*pb.Value{"f": {ValueType: &pb.Value_IntegerValue{int64(1)}}},
 		}
 	)
-	server.AddRPC(
+	server.AddData(
+		"GetDocument",
 		&pb.BatchGetDocumentsRequest{
 			Database:  dbPath,
 			Documents: []string{path},
