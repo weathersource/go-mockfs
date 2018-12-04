@@ -133,7 +133,7 @@ func (a byFieldPath) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a byFieldPath) Less(i, j int) bool { return a[i].FieldPath < a[j].FieldPath }
 
 // GetDocument overrides the FirestoreServer GetDocument method
-func (s *MockServer) GetDocument(_ context.Context, req *pb.GetDocumentRequest) (*pb.Document, error) {
+func (s *MockServer) GetDocument(ctx context.Context, req *pb.GetDocumentRequest) (*pb.Document, error) {
 	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
@@ -142,7 +142,7 @@ func (s *MockServer) GetDocument(_ context.Context, req *pb.GetDocumentRequest) 
 }
 
 // Commit overrides the FirestoreServer Commit method
-func (s *MockServer) Commit(_ context.Context, req *pb.CommitRequest) (*pb.CommitResponse, error) {
+func (s *MockServer) Commit(ctx context.Context, req *pb.CommitRequest) (*pb.CommitResponse, error) {
 	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
@@ -195,7 +195,7 @@ func (s *MockServer) RunQuery(req *pb.RunQueryRequest, qs pb.Firestore_RunQueryS
 }
 
 // BeginTransaction overrides the FirestoreServer BeginTransaction method
-func (s *MockServer) BeginTransaction(_ context.Context, req *pb.BeginTransactionRequest) (*pb.BeginTransactionResponse, error) {
+func (s *MockServer) BeginTransaction(ctx context.Context, req *pb.BeginTransactionRequest) (*pb.BeginTransactionResponse, error) {
 	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
@@ -204,7 +204,7 @@ func (s *MockServer) BeginTransaction(_ context.Context, req *pb.BeginTransactio
 }
 
 // Rollback overrides the FirestoreServer Rollback method
-func (s *MockServer) Rollback(_ context.Context, req *pb.RollbackRequest) (*empty.Empty, error) {
+func (s *MockServer) Rollback(ctx context.Context, req *pb.RollbackRequest) (*empty.Empty, error) {
 	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
