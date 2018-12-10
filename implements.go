@@ -22,7 +22,6 @@ package mockfs
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
 	pb "google.golang.org/genproto/googleapis/firestore/v1beta1"
@@ -32,7 +31,7 @@ import (
 
 // GetDocument overrides the FirestoreServer GetDocument method
 func (s *MockServer) GetDocument(ctx context.Context, req *pb.GetDocumentRequest) (*pb.Document, error) {
-	res, err := s.getData("GetDocument", req)
+	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +40,7 @@ func (s *MockServer) GetDocument(ctx context.Context, req *pb.GetDocumentRequest
 
 // Commit overrides the FirestoreServer Commit method
 func (s *MockServer) Commit(ctx context.Context, req *pb.CommitRequest) (*pb.CommitResponse, error) {
-	res, err := s.getData("Commit", req)
+	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +49,7 @@ func (s *MockServer) Commit(ctx context.Context, req *pb.CommitRequest) (*pb.Com
 
 // BatchGetDocuments overrides the FirestoreServer BatchGetDocuments method
 func (s *MockServer) BatchGetDocuments(req *pb.BatchGetDocumentsRequest, bs pb.Firestore_BatchGetDocumentsServer) error {
-	res, err := s.getData("BatchGetDocuments", req)
+	res, err := s.popRPC(req)
 	if err != nil {
 		return err
 	}
@@ -64,7 +63,7 @@ func (s *MockServer) BatchGetDocuments(req *pb.BatchGetDocumentsRequest, bs pb.F
 		case error:
 			return res
 		default:
-			panic(fmt.Sprintf("bad response type in BatchGetDocuments: %+v", res))
+			panic(fmt.Sprintf("mockfs.BatchGetDocuments: Bad response type: %+v", res))
 		}
 	}
 	return nil
@@ -72,7 +71,7 @@ func (s *MockServer) BatchGetDocuments(req *pb.BatchGetDocumentsRequest, bs pb.F
 
 // RunQuery overrides the FirestoreServer RunQuery method
 func (s *MockServer) RunQuery(req *pb.RunQueryRequest, qs pb.Firestore_RunQueryServer) error {
-	res, err := s.getData("RunQuery", req)
+	res, err := s.popRPC(req)
 	if err != nil {
 		return err
 	}
@@ -86,7 +85,7 @@ func (s *MockServer) RunQuery(req *pb.RunQueryRequest, qs pb.Firestore_RunQueryS
 		case error:
 			return res
 		default:
-			panic(fmt.Sprintf("bad response type in RunQuery: %+v", res))
+			panic(fmt.Sprintf("mockfs.RunQuery: Bad response type: %+v", res))
 		}
 	}
 	return nil
@@ -94,7 +93,7 @@ func (s *MockServer) RunQuery(req *pb.RunQueryRequest, qs pb.Firestore_RunQueryS
 
 // BeginTransaction overrides the FirestoreServer BeginTransaction method
 func (s *MockServer) BeginTransaction(ctx context.Context, req *pb.BeginTransactionRequest) (*pb.BeginTransactionResponse, error) {
-	res, err := s.getData("BeginTransaction", req)
+	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +102,7 @@ func (s *MockServer) BeginTransaction(ctx context.Context, req *pb.BeginTransact
 
 // Rollback overrides the FirestoreServer Rollback method
 func (s *MockServer) Rollback(ctx context.Context, req *pb.RollbackRequest) (*empty.Empty, error) {
-	res, err := s.getData("Rollback", req)
+	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
 	}
@@ -116,11 +115,9 @@ func (s *MockServer) Listen(stream pb.Firestore_ListenServer) error {
 	if err != nil {
 		return err
 	}
-	responses, err := s.getData("Listen", req)
+	responses, err := s.popRPC(req)
 	if err != nil {
-		if status.Code(err) == codes.Unknown && strings.Contains(err.Error(), "MockServer") {
-			// The stream will retry on Unknown, but we don't want that to happen if
-			// the error comes from us.
+		if status.Code(err) == codes.Unknown {
 			panic(err)
 		}
 		return err

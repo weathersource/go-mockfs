@@ -29,8 +29,7 @@ func Example_error() {
 		dbPath        = "projects/projectID/databases/(default)"
 		path          = "projects/projectID/databases/(default)/documents/C/a"
 	)
-	server.AddData(
-		"GetDocument",
+	server.AddRPC(
 		&pb.BatchGetDocumentsRequest{
 			Database:  dbPath,
 			Documents: []string{path},
@@ -74,8 +73,7 @@ func Example_success() {
 			Fields:     map[string]*pb.Value{"f": {ValueType: &pb.Value_IntegerValue{int64(1)}}},
 		}
 	)
-	server.AddData(
-		"GetDocument",
+	server.AddRPC(
 		&pb.BatchGetDocumentsRequest{
 			Database:  dbPath,
 			Documents: []string{path},
