@@ -40,6 +40,7 @@ func (s *MockServer) GetDocument(ctx context.Context, req *pb.GetDocumentRequest
 
 // Commit overrides the FirestoreServer Commit method
 func (s *MockServer) Commit(ctx context.Context, req *pb.CommitRequest) (*pb.CommitResponse, error) {
+	fmt.Printf("%+v\n", req)
 	res, err := s.popRPC(req)
 	if err != nil {
 		return nil, err
@@ -117,6 +118,7 @@ func (s *MockServer) Listen(stream pb.Firestore_ListenServer) error {
 	}
 	responses, err := s.popRPC(req)
 	if err != nil {
+		fmt.Println(err)
 		if status.Code(err) == codes.Unknown {
 			panic(err)
 		}
