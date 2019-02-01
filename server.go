@@ -84,11 +84,13 @@ func (s *MockServer) AddRPCAdjust(wantReq proto.Message, resp interface{}, adjus
 // It returns the response, or an error if the request doesn't match what
 // was expected or there are no expected rpcs.
 func (s *MockServer) popRPC(gotReq proto.Message) (interface{}, error) {
-	if len(s.reqItems) == 0 {
+	if len(s.reqItems) == 0 || len(s.resps) == 0 {
 		panic("mockfs.popRPC: Out of RPCs.")
 	}
 	ri := s.reqItems[0]
+	resp := s.resps[0]
 	s.reqItems = s.reqItems[1:]
+	s.resps = s.resps[1:]
 	if ri.wantReq != nil {
 		if ri.adjust != nil {
 			ri.adjust(gotReq)
@@ -112,8 +114,6 @@ func (s *MockServer) popRPC(gotReq proto.Message) (interface{}, error) {
 				ri.wantReq, proto.MarshalTextString(ri.wantReq)))
 		}
 	}
-	resp := s.resps[0]
-	s.resps = s.resps[1:]
 	if err, ok := resp.(error); ok {
 		return nil, err
 	}
