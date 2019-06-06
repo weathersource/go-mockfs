@@ -1,4 +1,4 @@
-// This file has been modified for the oringinal found at
+// This file has been modified for the original found at
 // https://github.com/GoogleCloudPlatform/google-cloud-go/blob/master/firestore/mock_test.go
 //
 // Copyright 2017 Google LLC
@@ -24,7 +24,7 @@ import (
 	"fmt"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
-	pb "google.golang.org/genproto/googleapis/firestore/v1beta1"
+	pb "google.golang.org/genproto/googleapis/firestore/v1beta2"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 )

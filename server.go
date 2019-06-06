@@ -1,4 +1,4 @@
-// This file has been modified for the oringinal found at
+// This file has been modified for the original found at
 // https://github.com/GoogleCloudPlatform/google-cloud-go/blob/master/firestore/mock_test.go
 //
 // Copyright 2017 Google LLC
@@ -26,7 +26,7 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	errors "github.com/weathersource/go-errors"
 	gsrv "github.com/weathersource/go-gsrv"
-	pb "google.golang.org/genproto/googleapis/firestore/v1beta1"
+	pb "google.golang.org/genproto/googleapis/firestore/v1beta2"
 )
 
 // MockServer mocks the pb.FirestoreServer interface
