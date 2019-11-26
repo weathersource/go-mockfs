@@ -24,7 +24,7 @@ import (
 	"fmt"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
-	pb "google.golang.org/genproto/googleapis/firestore/v1beta2"
+	pb "google.golang.org/genproto/googleapis/firestore/v1"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 )
@@ -72,6 +72,7 @@ func (s *MockServer) BatchGetDocuments(req *pb.BatchGetDocumentsRequest, bs pb.F
 // RunQuery overrides the FirestoreServer RunQuery method
 func (s *MockServer) RunQuery(req *pb.RunQueryRequest, qs pb.Firestore_RunQueryServer) error {
 	res, err := s.popRPC(req)
+	// fmt.Println(res, err)
 	if err != nil {
 		return err
 	}

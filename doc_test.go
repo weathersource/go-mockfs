@@ -8,7 +8,7 @@ import (
 	ptypes "github.com/golang/protobuf/ptypes"
 	assert "github.com/stretchr/testify/assert"
 	mockfs "github.com/weathersource/go-mockfs"
-	pb "google.golang.org/genproto/googleapis/firestore/v1beta1"
+	pb "google.golang.org/genproto/googleapis/firestore/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 )

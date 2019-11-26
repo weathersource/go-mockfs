@@ -8,7 +8,7 @@ import (
 	ptypes "github.com/golang/protobuf/ptypes"
 	tspb "github.com/golang/protobuf/ptypes/timestamp"
 	assert "github.com/stretchr/testify/assert"
-	pb "google.golang.org/genproto/googleapis/firestore/v1beta1"
+	pb "google.golang.org/genproto/googleapis/firestore/v1"
 )
 
 var (
