@@ -24,3 +24,18 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
       - run: go test -v -race ./...
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
+  weekly:
+    triggers:
+      - schedule:
+          cron: "0 10 * * 1"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build
