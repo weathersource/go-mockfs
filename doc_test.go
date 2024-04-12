@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	ptypes "github.com/golang/protobuf/ptypes"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	assert "github.com/stretchr/testify/assert"
 	mockfs "github.com/weathersource/go-mockfs"
 	pb "google.golang.org/genproto/googleapis/firestore/v1"
@@ -25,7 +25,7 @@ func Example_error() {
 	// Populate a mock document "a" in collection "C"
 	var (
 		aTime         = time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
-		aTimestamp, _ = ptypes.TimestampProto(aTime)
+		aTimestamp = timestamppb.New(aTime)
 		dbPath        = "projects/projectID/databases/(default)"
 		path          = "projects/projectID/databases/(default)/documents/C/a"
 	)
@@ -62,8 +62,8 @@ func Example_success() {
 	var (
 		aTime          = time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
 		aTime2         = time.Date(2017, 2, 5, 0, 0, 0, 0, time.UTC)
-		aTimestamp, _  = ptypes.TimestampProto(aTime)
-		aTimestamp2, _ = ptypes.TimestampProto(aTime2)
+		aTimestamp  = timestamppb.New(aTime)
+		aTimestamp2 = timestamppb.New(aTime2)
 		dbPath         = "projects/projectID/databases/(default)"
 		path           = "projects/projectID/databases/(default)/documents/C/b"
 		pdoc           = &pb.Document{

@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"sort"
 
-	proto "github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	errors "github.com/weathersource/go-errors"
 	gsrv "github.com/weathersource/go-gsrv"
 	pb "google.golang.org/genproto/googleapis/firestore/v1"

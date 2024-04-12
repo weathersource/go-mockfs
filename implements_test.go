@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	empty "github.com/golang/protobuf/ptypes/empty"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 	"github.com/stretchr/testify/assert"
 	errors "github.com/weathersource/go-errors"
 	pb "google.golang.org/genproto/googleapis/firestore/v1"

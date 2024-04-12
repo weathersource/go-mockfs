@@ -5,8 +5,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
-	ptypes "github.com/golang/protobuf/ptypes"
-	tspb "github.com/golang/protobuf/ptypes/timestamp"
+	tspb "google.golang.org/protobuf/types/known/timestamppb"
 	assert "github.com/stretchr/testify/assert"
 	pb "google.golang.org/genproto/googleapis/firestore/v1"
 )
@@ -21,10 +20,7 @@ var (
 )
 
 func mustTimestampProto(t time.Time) *tspb.Timestamp {
-	ts, err := ptypes.TimestampProto(t)
-	if err != nil {
-		panic(err)
-	}
+	ts := tspb.New(t)
 	return ts
 }
 

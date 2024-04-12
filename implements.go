@@ -23,7 +23,7 @@ import (
 	"context"
 	"fmt"
 
-	empty "github.com/golang/protobuf/ptypes/empty"
+	empty "google.golang.org/protobuf/types/known/emptypb"
 	pb "google.golang.org/genproto/googleapis/firestore/v1"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
