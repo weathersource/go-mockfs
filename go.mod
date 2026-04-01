@@ -1,15 +1,13 @@
 module github.com/weathersource/go-mockfs
 
-go 1.23.0
-
-toolchain go1.23.3
+go 1.25
 
 require (
 	cloud.google.com/go/firestore v1.18.0
 	github.com/golang/protobuf v1.5.4
 	github.com/stretchr/testify v1.10.0
-	github.com/weathersource/go-errors v1.0.3
-	github.com/weathersource/go-gsrv v1.0.3
+	github.com/weathersource/go-errors v1.0.6
+	github.com/weathersource/go-gsrv v1.0.5
 	google.golang.org/api v0.231.0
 	google.golang.org/genproto v0.0.0-20250428153025-10db94c68c34
 	google.golang.org/grpc v1.72.0
