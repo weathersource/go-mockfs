@@ -23,10 +23,10 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/golang/protobuf/proto"
-	errors "github.com/weathersource/go-errors"
+	pb "cloud.google.com/go/firestore/apiv1/firestorepb"
 	gsrv "github.com/weathersource/go-gsrv"
-	pb "google.golang.org/genproto/googleapis/firestore/v1"
+	"google.golang.org/protobuf/encoding/prototext"
+	"google.golang.org/protobuf/proto"
 )
 
 // MockServer mocks the pb.FirestoreServer interface
@@ -88,9 +88,7 @@ func (s *MockServer) popRPC(gotReq proto.Message) (interface{}, error) {
 		panic("mockfs.popRPC: Out of RPCs.")
 	}
 	ri := s.reqItems[0]
-	resp := s.resps[0]
 	s.reqItems = s.reqItems[1:]
-	s.resps = s.resps[1:]
 	if ri.wantReq != nil {
 		if ri.adjust != nil {
 			ri.adjust(gotReq)
@@ -105,15 +103,18 @@ func (s *MockServer) popRPC(gotReq proto.Message) (interface{}, error) {
 				case *pb.Write_Transform:
 					sort.Sort(byFieldPath(opTyped.Transform.FieldTransforms))
 				}
+				sort.Sort(byFieldPath(w.UpdateTransforms))
 			}
 		}
 
 		if !proto.Equal(gotReq, ri.wantReq) {
-			return nil, errors.NewInternalError(fmt.Sprintf("mockfs.popRPC: Bad request\ngot:  %T\n%s\nwant: %T\n%s",
-				gotReq, proto.MarshalTextString(gotReq),
-				ri.wantReq, proto.MarshalTextString(ri.wantReq)))
+			return nil, fmt.Errorf("mockServer: bad request\ngot:\n%T\n%s\nwant:\n%T\n%s",
+				gotReq, prototext.Format(gotReq),
+				ri.wantReq, prototext.Format(ri.wantReq))
 		}
 	}
+	resp := s.resps[0]
+	s.resps = s.resps[1:]
 	if err, ok := resp.(error); ok {
 		return nil, err
 	}

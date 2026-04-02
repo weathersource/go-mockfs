@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/protobuf/proto"
-	tspb "google.golang.org/protobuf/types/known/timestamppb"
+	pb "cloud.google.com/go/firestore/apiv1/firestorepb"
 	assert "github.com/stretchr/testify/assert"
-	pb "google.golang.org/genproto/googleapis/firestore/v1"
+	"google.golang.org/protobuf/proto"
+	tspb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var (
